@@ -7,14 +7,15 @@ import java.util.ArrayList;
 
 public class Human extends Land{
 
-    int health = 8;
-    int strength = 3;
+    private int health = 8;
+    private int strength = 3;
+    private String symbol = new String("C");
 
     ArrayList<Equipment> inventory = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "H";
+        return this.symbol;
     }
 
 }
