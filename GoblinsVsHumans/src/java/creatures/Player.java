@@ -59,14 +59,25 @@ public class Player extends Land {
         }
 
         //Equip the new equipment
-        if (equipment.getRole() == Equipment.Role.DEFEND){
-            setHealth(this.getHealth()+equipment.getHealth());
-            setStrength(this.getStrength()+equipment.getStrength());
-        } else if (equipment.getRole() == Equipment.Role.ATTACK) {
-            setStrength(this.getStrength()+equipment.getStrength());
-            setHealth(this.getHealth()+equipment.getHealth());
-        }
-
+        setStrength(this.getStrength()+equipment.getStrength());
+        setHealth(this.getHealth()+equipment.getHealth());
         inventory.put(equipment.getType(),equipment);
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        result += "Symbol: " + this.getSymbol() + "\n";
+        result += "Position: " + "x = " + this.getPosition()[1] + ", " + "y = " + this.getPosition()[0] + "\n";
+        result += "Health: " + this.getHealth() + "\n";
+        result += "Strength: " + this.getStrength() + "\n\n";
+        result += "Equipments: " + "\n";
+        if(this.inventory.isEmpty()){
+            result += "No Equipments are attached yet.";
+        }
+        for(Equipment.Type key: this.inventory.keySet()){
+            result += this.inventory.get(key).toString() + "\n";
+        }
+        return result;
     }
 }

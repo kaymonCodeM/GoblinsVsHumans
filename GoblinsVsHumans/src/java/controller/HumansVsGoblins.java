@@ -1,6 +1,9 @@
 package controller;
 
+import creatures.Goblin;
 import creatures.Human;
+import creatures.Player;
+import items.Drop;
 import land.Land;
 
 public class HumansVsGoblins {
@@ -18,14 +21,8 @@ public class HumansVsGoblins {
     }
 
     public static void main(String[] args) {
-        HumansVsGoblins hvg = new HumansVsGoblins();
-        System.out.println(hvg.getGameWorld()[0][0].toString());
-        for (Land[] lands : hvg.getGameWorld()){
-            for (Land land : lands){
-                System.out.print(land.getSymbol() + " ");
-            }
-            System.out.println();
-        }
+        Player player = new Player(new int[]{8,9});
+        System.out.println(player.toString());
     }
 }
 

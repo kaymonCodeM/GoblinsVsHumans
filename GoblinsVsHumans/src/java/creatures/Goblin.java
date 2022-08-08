@@ -10,7 +10,7 @@ public class Goblin extends Land {
 
     public Goblin(int[] position) {
         super(position, 'G');
-        this.drops = new Drop(this.getPosition());
+        this.drops = new Drop(position);
     }
 
     public int getHealth() {
@@ -35,5 +35,17 @@ public class Goblin extends Land {
 
     public void setDrops(Drop drops) {
         this.drops = drops;
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        result += "Symbol: " + this.getSymbol() + "\n";
+        result += "Position: " + "x = " + this.getPosition()[1] + ", " + "y = " + this.getPosition()[0] + "\n";
+        result += "Health: " + this.getHealth() + "\n";
+        result += "Strength: " + this.getStrength() + "\n\n";
+        result += "DROPS: " + "\n\n";
+        result += drops.toString();
+        return result;
     }
 }

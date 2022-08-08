@@ -11,7 +11,7 @@ public class Drop extends Land implements EquipmentPool {
     public Drop(int[] position) {
         super(position, 'D');
 
-        int count = (int)(Math.random()*4)+1;
+        int count = (int)(Math.random()*3)+1;
         for(int i=1; i<=count;i++){
             this.drops.put(i,selectRandomEquipment());
         }
@@ -23,5 +23,15 @@ public class Drop extends Land implements EquipmentPool {
 
     public void setDrops(Map<Integer, Equipment> drops) {
         this.drops = drops;
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (Integer key: drops.keySet()){
+            result += "ELEMENT: " + key + "\n";
+            result += drops.get(key).toString() + "\n\n";
+        }
+        return result;
     }
 }

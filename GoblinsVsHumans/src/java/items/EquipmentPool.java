@@ -7,9 +7,9 @@ public interface EquipmentPool {
                           new Equipment("Slasher",Equipment.Role.ATTACK,Equipment.Type.SWORD,1,3),
                           new Equipment("Butcher",Equipment.Role.ATTACK,Equipment.Type.AXE,0,4),
                           new Equipment("War Hammer",Equipment.Role.ATTACK,Equipment.Type.HAMMER,0,3),
-                          new Equipment("Sword of heavenly Light",Equipment.Role.ATTACK,Equipment.Type.AXE,2,3),
+                          new Equipment("Sword of heavenly Light",Equipment.Role.ATTACK,Equipment.Type.SWORD,2,3),
                           new Equipment("God destroyer",Equipment.Role.ATTACK,Equipment.Type.AXE,-2,6),
-                          new Equipment("Breaker of Mountains",Equipment.Role.ATTACK,Equipment.Type.AXE,-1,5)};
+                          new Equipment("Breaker of Mountains",Equipment.Role.ATTACK,Equipment.Type.HAMMER,-1,5)};
     Equipment[] defend = {new Equipment("Shield of Destiny",Equipment.Role.DEFEND,Equipment.Type.SHIELD,4,0),
                           new Equipment("The Great Defence",Equipment.Role.DEFEND,Equipment.Type.CHEST,6,0),
                           new Equipment("Golden Gauntlets",Equipment.Role.DEFEND,Equipment.Type.GLOVES,2,0),

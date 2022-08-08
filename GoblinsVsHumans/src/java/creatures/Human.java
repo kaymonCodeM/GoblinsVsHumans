@@ -44,4 +44,18 @@ public class Human extends Land implements EquipmentPool {
     public void setInventory(Map<Integer, Equipment> inventory) {
         this.inventory = inventory;
     }
+
+    @Override
+    public String toString() {
+        String result = "";
+        result += "Symbol: " + this.getSymbol() + "\n";
+        result += "Position: " + "x = " + this.getPosition()[1] + ", " + "y = " + this.getPosition()[0] + "\n";
+        result += "Health: " + this.getHealth() + "\n";
+        result += "Strength: " + this.getStrength() + "\n\n";
+        for(Integer key: this.inventory.keySet()){
+            result += "Equipment: " + key +  "\n";
+            result += this.inventory.get(key).toString() + "\n\n";
+        }
+        return result;
+    }
 }

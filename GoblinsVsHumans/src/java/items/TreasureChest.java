@@ -11,7 +11,7 @@ public class TreasureChest extends Land implements EquipmentPool {
     public TreasureChest(int[] position) {
         super(position, 'C');
 
-        int count = (int)(Math.random()*4)+1;
+        int count = (int)(Math.random()*3)+1;
         for(int i=1; i<=count;i++){
             this.chest.put(i,selectRandomEquipment());
         }
@@ -23,5 +23,15 @@ public class TreasureChest extends Land implements EquipmentPool {
 
     public void setChest(Map<Integer, Equipment> chest) {
         this.chest = chest;
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (Integer key: chest.keySet()){
+            result += "ELEMENT: " + key + "\n";
+            result += chest.get(key).toString() + "\n";
+        }
+        return result;
     }
 }

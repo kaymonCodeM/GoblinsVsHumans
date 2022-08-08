@@ -58,4 +58,15 @@ public class Equipment {
     public void setStrength(int strength) {
         this.strength = strength;
     }
+
+    @Override
+    public String toString() {
+        String result ="";
+        result += "Description: " + this.description + "\n";
+        result += "|Role: " + this.getRole() + "| ";
+        result += "|Type: " + this.getType() + "| ";
+        result += "|Health: " + this.getHealth() + "| ";
+        result += "|Strength: " + this.getStrength() + "| ";
+        return result;
+    }
 }
