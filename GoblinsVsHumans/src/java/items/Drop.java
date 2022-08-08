@@ -5,12 +5,23 @@ import land.Land;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Drop extends Land implements getEquipmentPool {
-    private String symbol = new String("D");
+public class Drop extends Land implements EquipmentPool {
     Map<Integer,Equipment> drops = new HashMap();
 
-    @Override
-    public String toString() {
-        return this.symbol;
+    public Drop(int[] position) {
+        super(position, 'D');
+
+        int count = (int)(Math.random()*4)+1;
+        for(int i=1; i<=count;i++){
+            this.drops.put(i,selectRandomEquipment());
+        }
+    }
+
+    public Map<Integer, Equipment> getDrops() {
+        return drops;
+    }
+
+    public void setDrops(Map<Integer, Equipment> drops) {
+        this.drops = drops;
     }
 }

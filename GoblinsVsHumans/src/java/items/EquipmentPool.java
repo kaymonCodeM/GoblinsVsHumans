@@ -1,6 +1,6 @@
 package items;
 
-public interface getEquipmentPool {
+public interface EquipmentPool {
     Equipment[] attack = {};
     Equipment[] defend = {};
     Equipment[][] equipments = {attack,defend};

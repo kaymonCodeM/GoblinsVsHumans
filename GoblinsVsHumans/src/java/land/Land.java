@@ -1,10 +1,19 @@
 package land;
 
-public class Land {
-    private String symbol = new String("*");
+public class Land extends Location {
+
+    public Land(int[] position){
+        super(position,'*');
+    }
+    public Land(int[] position,char symbol) {
+        super(position, symbol);
+    }
 
     @Override
     public String toString() {
-        return this.symbol;
+        String result = "";
+        result += "Symbol: " + this.getSymbol() + "\n";
+        result += "Position: " + "x = " + this.getPosition()[1] + ", " + "y = " + this.getPosition()[0] + "\n";
+        return result;
     }
 }
