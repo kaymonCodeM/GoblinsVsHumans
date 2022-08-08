@@ -10,7 +10,7 @@ public class Player extends Land {
     private int Health = 8;
     private int strength = 3;
 
-    private Map<String,Equipment> inventory = new HashMap<>();
+    private Map<Equipment.Type,Equipment> inventory = new HashMap<>();
 
     public Player(int[] position) {
         super(position,'P');
@@ -24,7 +24,7 @@ public class Player extends Land {
         return strength;
     }
 
-    public Map<String, Equipment> getInventory() {
+    public Map<Equipment.Type, Equipment> getInventory() {
         return inventory;
     }
 
@@ -36,27 +36,37 @@ public class Player extends Land {
         this.strength = strength;
     }
 
-    public void setInventory(Map<String, Equipment> inventory) {
+    public void setInventory(Map<Equipment.Type, Equipment> inventory) {
         this.inventory = inventory;
     }
 
     public void attachEquipment(Equipment equipment){
-
-        if (this.inventory.containsKey(equipment.getType())){
+        //A player can only attach one attack power
+        if (equipment.getRole() == Equipment.Role.ATTACK){
+            for (Equipment.Type key: this.inventory.keySet()){
+                if (this.inventory.get(key).getRole() == Equipment.Role.ATTACK) {
+                    setHealth(this.getHealth()-this.inventory.get(key).getHealth());
+                    setStrength(this.getStrength()-this.inventory.get(key).getStrength());
+                    this.inventory.remove(key);
+                    break;
+                }
+            }
+            //Remove the current defend equipment if the new equipment is of the same type
+        }else if (this.inventory.containsKey(equipment.getType())){
             Equipment myEquipment = this.inventory.get(equipment.getType());
-            if (myEquipment.getRole() =='D'){
-                setHealth(this.getHealth()-myEquipment.getHealth());
-            } else if (myEquipment.getRole() =='A') {
-                setStrength(this.getStrength()-myEquipment.getStrength());
-            }
-        }else {
-            if (equipment.getRole() =='D'){
-                setHealth(this.getHealth()+equipment.getHealth());
-            } else if (equipment.getRole() =='A') {
-                setStrength(this.getStrength()+equipment.getStrength());
-            }
-
+            setHealth(this.getHealth()-myEquipment.getHealth());
+            setStrength(this.getStrength()-myEquipment.getStrength());
         }
+
+        //Equip the new equipment
+        if (equipment.getRole() == Equipment.Role.DEFEND){
+            setHealth(this.getHealth()+equipment.getHealth());
+            setStrength(this.getStrength()+equipment.getStrength());
+        } else if (equipment.getRole() == Equipment.Role.ATTACK) {
+            setStrength(this.getStrength()+equipment.getStrength());
+            setHealth(this.getHealth()+equipment.getHealth());
+        }
+
         inventory.put(equipment.getType(),equipment);
     }
 }

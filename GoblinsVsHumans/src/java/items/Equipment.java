@@ -1,14 +1,17 @@
 package items;
 
+
+
 public class Equipment {
+    public enum Role{ATTACK,DEFEND}
+    public enum Type{HELMET,CHEST,GLOVES,BOOTS,SHIELD,SWORD,AXE,HAMMER}
     private String description;
-    private char role; // This char will be D for defend and A for attack
-    private String type; // Type can be chest, gloves, sword, axe, ect...
+    private Role role;
+    private Type type;
     private int health;
     private int strength;
 
-
-    public Equipment(String description, char role, String type, int health, int strength) {
+    public Equipment(String description, Role role, Type type, int health, int strength) {
         this.description = description;
         this.role = role;
         this.type = type;
@@ -20,11 +23,11 @@ public class Equipment {
         return description;
     }
 
-    public char getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
@@ -40,11 +43,11 @@ public class Equipment {
         this.description = description;
     }
 
-    public void setRole(char role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
