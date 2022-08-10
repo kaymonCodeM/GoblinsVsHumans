@@ -2,9 +2,9 @@ package land;
 
 public abstract class Location {
     private int[]position = new int [2];
-    private char symbol;
+    private String symbol;
 
-    public Location(int[] position, char symbol) {
+    public Location(int[] position, String symbol) {
         this.position = position;
         this.symbol = symbol;
     }
@@ -13,7 +13,7 @@ public abstract class Location {
         return position;
     }
 
-    public char getSymbol() {
+    public String getSymbol() {
         return symbol;
     }
 
@@ -21,7 +21,7 @@ public abstract class Location {
         this.position = position;
     }
 
-    public void setSymbol(char symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
     }
 }

@@ -7,13 +7,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player extends Land {
+
+    public static final String RESET = "\033[0m";
+    public static final String PURPLE_BOLD = "\033[1;35m";
     private int Health = 8;
     private int strength = 3;
 
     private Map<Equipment.Type,Equipment> inventory = new HashMap<>();
 
     public Player(int[] position) {
-        super(position,'P');
+        super(position,PURPLE_BOLD + "P" + RESET);
     }
 
     public int getHealth() {

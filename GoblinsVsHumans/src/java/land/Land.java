@@ -3,9 +3,9 @@ package land;
 public class Land extends Location {
 
     public Land(int[] position){
-        super(position,'*');
+        super(position,"*");
     }
-    public Land(int[] position,char symbol) {
+    public Land(int[] position,String symbol) {
         super(position, symbol);
     }
 

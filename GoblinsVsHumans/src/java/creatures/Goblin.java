@@ -4,12 +4,16 @@ import items.Drop;
 import land.Land;
 
 public class Goblin extends Land {
+
+    public static final String RESET = "\033[0m";
+
+    public static final String GREEN_BOLD = "\033[1;32m";
     private int health = 6;
     private int strength = 2;
     private Drop drops;
 
     public Goblin(int[] position) {
-        super(position, 'G');
+        super(position, GREEN_BOLD + "G" + RESET);
         this.drops = new Drop(position);
     }
 

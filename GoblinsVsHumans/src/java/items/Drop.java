@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Drop extends Land implements EquipmentPool {
+    public static final String RESET = "\033[0m";
+    public static final String RED_BOLD = "\033[1;31m";
     Map<Integer,Equipment> drops = new HashMap();
 
     public Drop(int[] position) {
-        super(position, 'D');
+        super(position, RED_BOLD + "D" + RESET);
 
         int count = (int)(Math.random()*3)+1;
         for(int i=1; i<=count;i++){

@@ -9,13 +9,15 @@ import java.util.Map;
 
 public class Human extends Land implements EquipmentPool {
 
+    public static final String RESET = "\033[0m";
+    public static final String BLUE_BOLD = "\033[1;34m";
     private int health = 8;
     private int strength = 3;
     private Map<Integer,Equipment> inventory = new HashMap();
 
     public Human(int[] position) {
-        super(position, 'H');
-        int count = (int)(Math.random()*4)+1;
+        super(position, BLUE_BOLD +"H" + RESET);
+        int count = (int)(Math.random()*3)+1;
         for(int i=1; i<=count;i++){
             this.inventory.put(i,selectRandomEquipment());
         }
