@@ -19,9 +19,6 @@ public class Equipment {
         this.strength = strength;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
     public Role getRole() {
         return role;
@@ -39,25 +36,6 @@ public class Equipment {
         return strength;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
-    }
 
     @Override
     public String toString() {

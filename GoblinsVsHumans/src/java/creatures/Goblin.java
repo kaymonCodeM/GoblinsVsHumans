@@ -33,13 +33,6 @@ public class Goblin extends Land {
         this.health = health;
     }
 
-    public void setStrength(int strength) {
-        this.strength = strength;
-    }
-
-    public void setDrops(Drop drops) {
-        this.drops = drops;
-    }
 
     @Override
     public String toString() {

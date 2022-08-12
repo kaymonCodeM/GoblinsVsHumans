@@ -24,9 +24,6 @@ public class TreasureChest extends Land implements EquipmentPool {
         return chest;
     }
 
-    public void setChest(Map<Integer, Equipment> chest) {
-        this.chest = chest;
-    }
 
     @Override
     public String toString() {

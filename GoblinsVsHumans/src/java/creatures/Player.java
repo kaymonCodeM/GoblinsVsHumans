@@ -39,9 +39,6 @@ public class Player extends Land {
         this.strength = strength;
     }
 
-    public void setInventory(Map<Equipment.Type, Equipment> inventory) {
-        this.inventory = inventory;
-    }
 
     public void attachEquipment(Equipment equipment){
         //A player can only attach one attack power

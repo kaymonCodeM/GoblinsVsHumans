@@ -39,14 +39,6 @@ public class Human extends Land implements EquipmentPool {
         this.health = health;
     }
 
-    public void setStrength(int strength) {
-        this.strength = strength;
-    }
-
-    public void setInventory(Map<Integer, Equipment> inventory) {
-        this.inventory = inventory;
-    }
-
     @Override
     public String toString() {
         String result = "";

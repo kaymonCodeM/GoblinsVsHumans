@@ -1,7 +1,7 @@
 package land;
 
 public abstract class Location {
-    private int[]position = new int [2];
+    private int[]position;
     private String symbol;
 
     public Location(int[] position, String symbol) {

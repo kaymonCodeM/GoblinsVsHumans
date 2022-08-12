@@ -14,27 +14,24 @@ import java.util.Scanner;
 
 
 public class HumansVsGoblins {
+    //Drops
+    private final ArrayList<Drop> drops = new ArrayList<>();
 
+    //Humans
+    private final ArrayList<Human> humans = new ArrayList<>();
+
+    //Goblins
+    private final ArrayList<Goblin> goblins = new ArrayList<>();
+
+    //Chest
+    private final ArrayList<TreasureChest>chest = new ArrayList<>();
     private boolean play = true;
     private Land[][] gameWorld = new Land[22][22];
 
-    //Humans
-    private ArrayList<Human> humans = new ArrayList<>();
-
-    //Goblins
-    private ArrayList<Goblin> goblins = new ArrayList<>();
-
     private Scanner userInput;
-
-    //Drops
-    private ArrayList<Drop> drops = new ArrayList<>();
 
     private Player player;
 
-    //Drops
-    private ArrayList<TreasureChest>chest = new ArrayList<>();
-
-    private int round =1;
 
 
     public void playHumansVsGoblins(){
@@ -51,14 +48,17 @@ public class HumansVsGoblins {
         System.out.println("Good luck and have fun!");
         while (play){
             goblinsPursuePlayer();
+
+            System.out.println(this.stringGameWorld());
+
             if(!this.play){
+                this.closeScanner();
                 break;
             }
 
-            System.out.println(this.toString());
-
             if (goblins.isEmpty()){
                 System.out.println("Great Job! You win! All the goblins have been defeated.");
+                this.closeScanner();
                 break;
             }
 
@@ -233,18 +233,22 @@ public class HumansVsGoblins {
             if(this.gameWorld[y+1][x] instanceof Goblin){
                 String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y+1][x],this);
                 System.out.println(result);
+                System.out.println(this.stringGameWorld());
                 createChest();
             } else if (this.gameWorld[y-1][x] instanceof Goblin) {
                 String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y-1][x],this);
                 System.out.println(result);
+                System.out.println(this.stringGameWorld());
                 createChest();
             } else if (this.gameWorld[y][x+1] instanceof Goblin) {
                 String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y][x+1],this);
                 System.out.println(result);
+                System.out.println(this.stringGameWorld());
                 createChest();
             } else if (this.gameWorld[y][x-1] instanceof Goblin) {
                 String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y][x-1],this);
                 System.out.println(result);
+                System.out.println(this.stringGameWorld());
                 createChest();
             }else {
                 int selectedItem =0;
@@ -414,48 +418,7 @@ public class HumansVsGoblins {
         this.gameWorld[from[0]][from[1]] = temp;
     }
 
-
-    public boolean getPlay(){
-        return this.play;
-    }
-    public Land[][] getGameWorld() {
-        return gameWorld;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public ArrayList<Human> getHumans() {
-        return humans;
-    }
-
-    public ArrayList<Goblin> getGoblins() {
-        return goblins;
-    }
-
-    public void setChest(ArrayList<TreasureChest> chest) {
-        this.chest = chest;
-    }
-
-    public void setPlay(boolean play) {
-        this.play = play;
-    }
-
-    public void setGameWorld(Land[][] gameWorld) {
-        this.gameWorld = gameWorld;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public void setUserInput(Scanner userInput) {
-        this.userInput = userInput;
-    }
-
-    @Override
-    public String toString() {
+    public String stringGameWorld() {
         String result = "";
         for (Land [] lands:this.getGameWorld()){
             for (Land land: lands){
@@ -485,6 +448,58 @@ public class HumansVsGoblins {
         this.getGoblins().remove(g);
     }
 
+
+    public boolean getPlay(){
+        return this.play;
+    }
+    public Land[][] getGameWorld() {
+        return gameWorld;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public ArrayList<Human> getHumans() {
+        return humans;
+    }
+
+    public ArrayList<Goblin> getGoblins() {
+        return goblins;
+    }
+
+    public Scanner getUserInput() {
+        return userInput;
+    }
+
+    public ArrayList<Drop> getDrops() {
+        return drops;
+    }
+
+    public ArrayList<TreasureChest> getChest() {
+        return chest;
+    }
+
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
+
+    public void setGameWorld(Land[][] gameWorld) {
+        this.gameWorld = gameWorld;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void setUserInput(Scanner userInput) {
+        this.userInput = userInput;
+    }
+
+    public void closeScanner(){
+        this.userInput.close();
+    }
     public static void main(String[] args) {
         HumansVsGoblins humansVsGoblins = new HumansVsGoblins();
         humansVsGoblins.playHumansVsGoblins();

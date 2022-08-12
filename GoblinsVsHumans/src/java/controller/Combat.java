@@ -3,19 +3,14 @@ package controller;
 import creatures.Goblin;
 import creatures.Human;
 import creatures.Player;
-import land.Land;
 
 public class Combat {
 
     public static void goblinAttack(Object o, Goblin g){
-        int goblinHealth = g.getHealth();
-        int goblinStrength = g.getStrength();
 
         if(o instanceof Human){
-            int humanHealth = ((Human) o).getHealth();
             ((Human) o).setHealth(((Human) o).getHealth()-(int)(Math.random()*g.getStrength()+1));
         } else if (o instanceof Player) {
-            int playerHealth = ((Player) o).getHealth();
             ((Player) o).setHealth(((Player) o).getHealth()-(int)(Math.random()*g.getStrength()+1));
         }
     }
