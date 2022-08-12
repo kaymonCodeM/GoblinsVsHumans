@@ -336,7 +336,7 @@ public class HumansVsGoblins {
         try{
             move = this.userInput.next().charAt(0);
         }catch (Exception e){
-            System.out.println("bad user input");
+            System.out.println("Please give n for north, s for south, e for east, and w for west");
             movePlayer();
             return;
         }
@@ -376,7 +376,8 @@ public class HumansVsGoblins {
                 swapLand(this.player.getPosition(), newPosition);
                 this.player.setPosition(newPosition);
             } else {
-                System.out.println("Please give n for north, s for south, e for east, and w for west");
+                System.out.println("Please give n for north, s for south, e for east, and w for west.");
+                System.out.println("If a land is already field you can not go there.");
                 movePlayer();
             }
         }

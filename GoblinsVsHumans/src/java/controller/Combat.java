@@ -30,7 +30,6 @@ public class Combat {
 
     public static String goblinVsHuman(Human h, Goblin g,HumansVsGoblins game){
         String result = "";
-        Land[][] newWorld = game.getGameWorld();
         while (h.getHealth()>0 && g.getHealth()>0){
             goblinAttack(h,g);
             humanAttackGoblin(h,g);
