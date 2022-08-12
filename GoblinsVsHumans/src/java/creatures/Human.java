@@ -56,7 +56,7 @@ public class Human extends Land implements EquipmentPool {
         result += "Strength: " + this.getStrength() + "\n\n";
         for(Integer key: this.inventory.keySet()){
             result += "Equipment: " + key +  "\n";
-            result += this.inventory.get(key).toString() + "\n\n";
+            result += this.inventory.get(key).toString() + "\n";
         }
         return result;
     }

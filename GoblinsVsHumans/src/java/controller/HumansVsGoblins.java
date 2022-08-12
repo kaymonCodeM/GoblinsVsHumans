@@ -4,17 +4,19 @@ import creatures.Goblin;
 import creatures.Human;
 import creatures.Player;
 import items.Drop;
+import items.Equipment;
 import items.TreasureChest;
 import land.Land;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
+import java.util.Scanner;
+
 
 public class HumansVsGoblins {
 
     private boolean play = true;
-    private Land[][] gameWorld = new Land[20][20];
+    private Land[][] gameWorld = new Land[22][22];
 
     //Humans
     private ArrayList<Human> humans = new ArrayList<>();
@@ -22,27 +24,74 @@ public class HumansVsGoblins {
     //Goblins
     private ArrayList<Goblin> goblins = new ArrayList<>();
 
+    private Scanner userInput;
+
     //Drops
-    private ArrayList<Goblin> drops = new ArrayList<>();
+    private ArrayList<Drop> drops = new ArrayList<>();
 
     private Player player;
 
     //Drops
-    private TreasureChest chest;
+    private ArrayList<TreasureChest>chest = new ArrayList<>();
 
     private int round =1;
 
+
+    public void playHumansVsGoblins(){
+        setupGame();
+        setUserInput(new Scanner(System.in));
+        System.out.println("This game is a n/s/e/w type of game.");
+        System.out.println("This means you move n for north, s for south, e for east, and w for west");
+        System.out.println("You are P which stands for Player. You will also be in the color purple");
+        System.out.println("The goblins will come and attack you. The goal is to stay away from the goblins unless if you feel that you can beat them.");
+        System.out.println("The game ends if you die or all the goblins are dealt with.");
+        System.out.println("Humans have equipments for you to boost up your gear. The humans will also attack the goblins if they come near them.");
+        System.out.println("Each completion of combat will spot a chest no matter what. Also a goblin will give you drop items when they are successfully killed.");
+        System.out.println("Humans can die but they are your pillars of defence. Draw the goblins near them!");
+        System.out.println("Good luck and have fun!");
+        while (play){
+            goblinsPursuePlayer();
+            if(!this.play){
+                break;
+            }
+
+            System.out.println(this.toString());
+
+            if (goblins.isEmpty()){
+                System.out.println("Great Job! You win! All the goblins have been defeated.");
+                break;
+            }
+
+            humansCheckForContact();
+
+            chestCheckForPlayer();
+
+            dropsCheckForPlayer();
+
+            System.out.println(("Your Stats:"));
+            System.out.println(this.player.toString() + "\n");
+            System.out.println("*****************************************************");
+            System.out.println("Make a move."+ "\n");
+            movePlayer();
+        }
+    }
     public void setupGame(){
-        for (int i=0;i<20;i++){
-            for (int j=0;j<20;j++){
+        for (int i=0;i<22;i++){
+            for (int j=0;j<22;j++){
                 this.gameWorld[i][j] = new Land(new int[]{i, j});
             }
+        }
+        for (int i=0;i<22;i++){
+            this.gameWorld[0][i].setSymbol("|");
+            this.gameWorld[i][0].setSymbol("|");
+            this.gameWorld[21][i].setSymbol("|");
+            this.gameWorld[i][21].setSymbol("|");
         }
 
         //Create 40 walls
         for (int i=0;i<40;i++){
-            int x = (int) (Math.random() * 20);
-            int y = (int) (Math.random() * 20);
+            int x = (int) (Math.random() * 20)+1;
+            int y = (int) (Math.random() * 20)+1;
             if(this.gameWorld[y][x].getSymbol().compareTo("|")!=0){
                 this.gameWorld[y][x].setSymbol("|");
             }else {
@@ -52,8 +101,8 @@ public class HumansVsGoblins {
 
         //Create 4 Humans
         for (int i=0;i<4;i++){
-            int x = (int) (Math.random() * 20);
-            int y = (int) (Math.random() * 20);
+            int x = (int) (Math.random() * 20)+1;
+            int y = (int) (Math.random() * 20)+1;
             if(this.gameWorld[y][x].getSymbol().compareTo("|")!=0 && !(this.gameWorld[y][x] instanceof Human)){
                 Human human = new Human(new int[]{y,x});
                 this.gameWorld[y][x] = human;
@@ -65,8 +114,8 @@ public class HumansVsGoblins {
 
         //Create 5 Goblins
         for (int i=0;i<5;i++){
-            int x = (int) (Math.random() * 20);
-            int y = (int) (Math.random() * 20);
+            int x = (int) (Math.random() * 20)+1;
+            int y = (int) (Math.random() * 20)+1;
             if(this.gameWorld[y][x].getSymbol().compareTo("|")!=0 && !(this.gameWorld[y][x] instanceof Human) && !(this.gameWorld[y][x] instanceof Goblin)){
                 Goblin goblin = new Goblin(new int[]{y,x});
                 this.gameWorld[y][x] = goblin;
@@ -78,8 +127,8 @@ public class HumansVsGoblins {
 
         //Create Player
         while (true){
-            int x = (int) (Math.random() * 20);
-            int y = (int) (Math.random() * 20);
+            int x = (int) (Math.random() * 20)+1;
+            int y = (int) (Math.random() * 20)+1;
             if(this.gameWorld[y][x].getSymbol().compareTo("|")!=0 && !(this.gameWorld[y][x] instanceof Human) && !(this.gameWorld[y][x] instanceof Goblin)){
                 Player p = new Player(new int[]{y,x});
                 this.gameWorld[y][x] = p;
@@ -88,54 +137,283 @@ public class HumansVsGoblins {
             }
         }
 
-
     }
-    public void humansCheckForGoblins(){
-        for (Human h: this.humans){
-            int y = h.getPosition()[0];
-            int x = h.getPosition()[1];
-            if(this.gameWorld[y+1][x] instanceof Goblin ||
-                    this.gameWorld[y-1][x] instanceof Goblin ||
-                    this.gameWorld[y][x+1] instanceof Goblin ||
-                    this.gameWorld[y][x-1] instanceof Goblin){
-                Combat.humanAttackGoblin(h, (Goblin) this.gameWorld[y+1][x+1]);
+
+    public void createChest(){
+        while (true) {
+            int x = (int) (Math.random() * 20) + 1;
+            int y = (int) (Math.random() * 20) + 1;
+            if (this.gameWorld[y][x].getSymbol().contains("*")) {
+                TreasureChest c = new TreasureChest(new int[]{y,x});
+                this.gameWorld[y][x] = c;
+                this.chest.add(c);
+                break;
             }
         }
     }
 
-    public void goblinsPursuePlayer(){
-        for (int i = 0; i<this.goblins.size();i++){
-            int goblinY = this.goblins.get(i).getPosition()[0];
-            int goblinX = this.goblins.get(i).getPosition()[1];
-            if(this.gameWorld[goblinY+1][goblinX] instanceof Player ||
-                    this.gameWorld[goblinY-1][goblinX] instanceof Player ||
-                    this.gameWorld[goblinY][goblinX+1] instanceof Player ||
-                    this.gameWorld[goblinY][goblinX-1] instanceof Player){
-                Combat.playerAttackGoblin(this.player,this.goblins.get(i));
+    public void dropsCheckForPlayer(){
+        for (int i = 0; i<this.drops.size();i++){
+            int y = this.drops.get(i).getPosition()[0];
+            int x = this.drops.get(i).getPosition()[1];
+            int selectedItem =0;
+            if (this.gameWorld[y+1][x] instanceof Player){
+                System.out.println("You have made contact with a Drop" + "\n");
+                while(selectedItem==0){
+                    selectedItem = playerSelectItem(this.drops.get(i).getDrops());
+                }
+                ((Drop) this.gameWorld[y][x]).getDrops().remove(selectedItem);
+                this.drops.get(i).getDrops().remove(selectedItem);
+            }else if (this.gameWorld[y-1][x] instanceof Player){
+                System.out.println("You have made contact with a drop" + "\n");
+                while(selectedItem==0){
+                    selectedItem = playerSelectItem(this.drops.get(i).getDrops());
+                }
+                ((Drop) this.gameWorld[y][x]).getDrops().remove(selectedItem);
+                this.drops.get(i).getDrops().remove(selectedItem);
+            }else if (this.gameWorld[y][x+1] instanceof Player){
+                System.out.println("You have made contact with a Drop" + "\n");
+                while(selectedItem==0){
+                    selectedItem = playerSelectItem(this.drops.get(i).getDrops());
+                }
+                ((Drop) this.gameWorld[y][x]).getDrops().remove(selectedItem);
+                this.drops.get(i).getDrops().remove(selectedItem);
+            }else if (this.gameWorld[y][x-1] instanceof Player){
+                System.out.println("You have made contact with a Drop" + "\n");
+                while(selectedItem==0){
+                    selectedItem = playerSelectItem(this.drops.get(i).getDrops());
+                }
+                ((Drop) this.gameWorld[y][x]).getDrops().remove(selectedItem);
+                this.drops.get(i).getDrops().remove(selectedItem);
+            }
+        }
+    }
+    public void chestCheckForPlayer(){
+        for(int i=0;i<this.chest.size();i++) {
+            int y = this.chest.get(i).getPosition()[0];
+            int x = this.chest.get(i).getPosition()[1];
+            int selectedItem = 0;
+            if (this.gameWorld[y + 1][x] instanceof Player) {
+                System.out.println("You have made contact with a Chest" + "\n");
+                while (selectedItem == 0) {
+                    selectedItem = playerSelectItem(this.chest.get(i).getChest());
+                }
+                ((TreasureChest) this.gameWorld[y][x]).getChest().remove(selectedItem);
+                this.chest.get(i).getChest().remove(selectedItem);
+            } else if (this.gameWorld[y - 1][x] instanceof Player) {
+                System.out.println("You have made contact with a Chest" + "\n");
+                while (selectedItem == 0) {
+                    selectedItem = playerSelectItem(this.chest.get(i).getChest());
+                }
+                ((TreasureChest) this.gameWorld[y][x]).getChest().remove(selectedItem);
+                this.chest.get(i).getChest().remove(selectedItem);
+            } else if (this.gameWorld[y][x + 1] instanceof Player) {
+                System.out.println("You have made contact with a Chest" + "\n");
+                while (selectedItem == 0) {
+                    selectedItem = playerSelectItem(this.chest.get(i).getChest());
+                }
+                ((TreasureChest) this.gameWorld[y][x]).getChest().remove(selectedItem);
+                this.chest.get(i).getChest().remove(selectedItem);
+            } else if (this.gameWorld[y][x - 1] instanceof Player) {
+                System.out.println("You have made contact with a Chest" + "\n");
+                while (selectedItem == 0) {
+                    selectedItem = playerSelectItem(this.chest.get(i).getChest());
+                }
+                ((TreasureChest) this.gameWorld[y][x]).getChest().remove(selectedItem);
+                this.chest.get(i).getChest().remove(selectedItem);
+            }
+        }
+    }
+    public void humansCheckForContact(){
+        for (int i=0; i<this.humans.size();i++){
+            int y = this.humans.get(i).getPosition()[0];
+            int x = this.humans.get(i).getPosition()[1];
+
+            //Human will attack goblin if it has made contact
+            if(this.gameWorld[y+1][x] instanceof Goblin){
+                String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y+1][x],this);
+                System.out.println(result);
+                createChest();
+            } else if (this.gameWorld[y-1][x] instanceof Goblin) {
+                String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y-1][x],this);
+                System.out.println(result);
+                createChest();
+            } else if (this.gameWorld[y][x+1] instanceof Goblin) {
+                String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y][x+1],this);
+                System.out.println(result);
+                createChest();
+            } else if (this.gameWorld[y][x-1] instanceof Goblin) {
+                String result = Combat.goblinVsHuman(this.humans.get(i),(Goblin) this.getGameWorld()[y][x-1],this);
+                System.out.println(result);
+                createChest();
             }else {
-                int playerY = this.player.getPosition()[0];
-                int playerX = this.player.getPosition()[1];
-                if (goblinY<playerY && this.getGameWorld()[goblinY+1][goblinX].getSymbol().contains("*")){
-                    this.goblins.get(i).setPosition(new int[]{goblinY+1,goblinX});
-                }else if (goblinY>playerY && this.getGameWorld()[goblinY-1][goblinX].getSymbol().contains("*")) {
-                    this.goblins.get(i).setPosition(new int[]{goblinY - 1, goblinX});
-                } else if (goblinX<playerX && this.getGameWorld()[goblinY][goblinX+1].getSymbol().contains("*")) {
-                    this.goblins.get(i).setPosition(new int[]{goblinY, goblinX+1});
-                } else if (goblinX>playerX && this.getGameWorld()[goblinY][goblinX-1].getSymbol().contains("*")) {
-                    this.goblins.get(i).setPosition(new int[]{goblinY, goblinX-1});
+                int selectedItem =0;
+                if (this.gameWorld[y+1][x] instanceof Player){
+                    System.out.println("You have made contact with a Human" + "\n");
+                    while(selectedItem==0){
+                        selectedItem = playerSelectItem(this.humans.get(i).getInventory());
+                    }
+                    ((Human) this.gameWorld[y][x]).getInventory().remove(selectedItem);
+                    this.humans.get(i).getInventory().remove(selectedItem);
+                }else if (this.gameWorld[y-1][x] instanceof Player){
+                    System.out.println("You have made contact with a Human" + "\n");
+                    while(selectedItem==0){
+                        selectedItem = playerSelectItem(this.humans.get(i).getInventory());
+                    }
+                    ((Human) this.gameWorld[y][x]).getInventory().remove(selectedItem);
+                    this.humans.get(i).getInventory().remove(selectedItem);
+                }else if (this.gameWorld[y][x+1] instanceof Player){
+                    System.out.println("You have made contact with a Human" + "\n");
+                    while(selectedItem==0){
+                        selectedItem = playerSelectItem(this.humans.get(i).getInventory());
+                    }
+                    ((Human) this.gameWorld[y][x]).getInventory().remove(selectedItem);
+                    this.humans.get(i).getInventory().remove(selectedItem);
+                }else if (this.gameWorld[y][x-1] instanceof Player){
+                    System.out.println("You have made contact with a Human" + "\n");
+                    while(selectedItem==0){
+                        selectedItem = playerSelectItem(this.humans.get(i).getInventory());
+                    }
+                    ((Human) this.gameWorld[y][x]).getInventory().remove(selectedItem);
+                    this.humans.get(i).getInventory().remove(selectedItem);
                 }
             }
         }
     }
 
+    public void goblinsPursuePlayer(){
+        for (int i=0;i<this.goblins.size();i++){
+            int goblinY = goblins.get(i).getPosition()[0];
+            int goblinX = goblins.get(i).getPosition()[1];
 
-    public void playHumansVsGoblins(){
-        setupGame();
-        System.out.println(this.toString());
+            //Goblin pursues player
+            int playerY = this.player.getPosition()[0];
+            int playerX = this.player.getPosition()[1];
+            if(playerY>goblinY && this.gameWorld[goblinY+1][goblinX].getSymbol().contains("*")){
+                int[] newPosition = new int[]{goblinY+1,goblinX};
+                swapLand(goblins.get(i).getPosition(),newPosition);
+                goblins.get(i).setPosition(newPosition);
+            }else if(playerY<goblinY && this.gameWorld[goblinY-1][goblinX].getSymbol().contains("*")){
+                int[] newPosition = new int[]{goblinY-1,goblinX};
+                swapLand(goblins.get(i).getPosition(),newPosition);
+                goblins.get(i).setPosition(newPosition);
+            }else if(playerX>goblinX && this.gameWorld[goblinY][goblinX+1].getSymbol().contains("*")){
+                int[] newPosition = new int[]{goblinY,goblinX+1};
+                swapLand(goblins.get(i).getPosition(),newPosition);
+                goblins.get(i).setPosition(newPosition);
+            }else if(playerX<goblinX && this.gameWorld[goblinY][goblinX-1].getSymbol().contains("*")){
+                int[] newPosition = new int[]{goblinY,goblinX-1};
+                swapLand(goblins.get(i).getPosition(),newPosition);
+                goblins.get(i).setPosition(newPosition);
+            }
 
-        goblinsPursuePlayer();
+            goblinY = this.goblins.get(i).getPosition()[0];
+            goblinX = this.goblins.get(i).getPosition()[1];
 
+            //Goblin Attacks Player
+            if(this.gameWorld[goblinY+1][goblinX] instanceof Player){
+                String result = Combat.playerVsGoblin((Player) this.gameWorld[goblinY+1][goblinX],goblins.get(i),this);
+                System.out.println(result);
+                createChest();
+            } else if (this.gameWorld[goblinY-1][goblinX] instanceof Player) {
+                String result = Combat.playerVsGoblin((Player) this.gameWorld[goblinY-1][goblinX],goblins.get(i),this);
+                System.out.println(result);
+                createChest();
+            } else if (this.gameWorld[goblinY][goblinX+1] instanceof Player) {
+                String result = Combat.playerVsGoblin((Player) this.gameWorld[goblinY][goblinX+1],goblins.get(i),this);
+                System.out.println(result);
+                createChest();
+            } else if (this.gameWorld[goblinY][goblinX-1] instanceof Player) {
+                String result = Combat.playerVsGoblin((Player) this.gameWorld[goblinY][goblinX-1],goblins.get(i),this);
+                System.out.println(result);
+                createChest();
+            }
+        }
     }
+
+    public void movePlayer(){
+        char move;
+        try{
+            move = this.userInput.next().charAt(0);
+        }catch (Exception e){
+            System.out.println("bad user input");
+            movePlayer();
+            return;
+        }
+        int y =this.player.getPosition()[0];
+        int x = this.player.getPosition()[1];
+        if(move =='n' && this.gameWorld[y-1][x] instanceof Goblin){
+            String result = Combat.playerVsGoblin(this.player,(Goblin) this.gameWorld[y-1][x],this);
+            System.out.println(result);
+            createChest();
+        }else if(move =='s' && this.gameWorld[y+1][x] instanceof Goblin){
+            String result = Combat.playerVsGoblin(this.player,(Goblin) this.gameWorld[y+1][x],this);
+            System.out.println(result);
+            createChest();
+        }else if(move =='e' && this.gameWorld[y][x+1] instanceof Goblin){
+            String result = Combat.playerVsGoblin(this.player,(Goblin) this.gameWorld[y][x+1],this);
+            System.out.println(result);
+            createChest();
+        }else if(move =='w' && this.gameWorld[y][x-1] instanceof Goblin){
+            String result = Combat.playerVsGoblin(this.player,(Goblin) this.gameWorld[y][x-1],this);
+            System.out.println(result);
+            createChest();
+        }else {
+            if (move == 'n' && this.gameWorld[y - 1][x].getSymbol().contains("*")) {
+                int[] newPosition = new int[]{y - 1, x};
+                swapLand(this.player.getPosition(), newPosition);
+                this.player.setPosition(newPosition);
+            } else if (move == 's' && this.gameWorld[y + 1][x].getSymbol().contains("*")) {
+                int[] newPosition = new int[]{y + 1, x};
+                swapLand(this.player.getPosition(), newPosition);
+                this.player.setPosition(newPosition);
+            } else if (move == 'e' && this.gameWorld[y][x + 1].getSymbol().contains("*")) {
+                int[] newPosition = new int[]{y, x + 1};
+                swapLand(this.player.getPosition(), newPosition);
+                this.player.setPosition(newPosition);
+            } else if (move == 'w' && this.gameWorld[y][x - 1].getSymbol().contains("*")) {
+                int[] newPosition = new int[]{y, x - 1};
+                swapLand(this.player.getPosition(), newPosition);
+                this.player.setPosition(newPosition);
+            } else {
+                System.out.println("Please give n for north, s for south, e for east, and w for west");
+                movePlayer();
+            }
+        }
+    }
+
+    public int playerSelectItem(Map<Integer, Equipment> items){
+        for (int key: items.keySet()){
+            System.out.println("Equipment " + key);
+            System.out.println(items.get(key).toString() + "\n");
+        }
+        System.out.println("Select the item that you want based on the equipment number.");
+        System.out.println("If you do not want an item just type the number -1");
+        System.out.println("WARNING: Any items that are of the same type will be replaced! Also a player can only have one attack item!" +"\n");
+
+        int select =0;
+        try{
+            select = Integer.parseInt(this.userInput.next());
+            if (select==-1){
+                return -1;
+            } else if (items.get(select) ==null) {
+                return 0;
+            }
+            this.player.attachEquipment(items.get(select));
+        }catch (Exception e){
+            System.out.println("\n" + "Please select a valid number..." + "\n");
+        }
+        return select;
+    }
+
+
+    public void swapLand(int[] from,int[] to){
+        Land temp = this.gameWorld[to[0]][to[1]];
+        this.gameWorld[to[0]][to[1]] = this.gameWorld[from[0]][from[1]];
+        this.gameWorld[from[0]][from[1]] = temp;
+    }
+
+
     public boolean getPlay(){
         return this.play;
     }
@@ -145,6 +423,18 @@ public class HumansVsGoblins {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public ArrayList<Human> getHumans() {
+        return humans;
+    }
+
+    public ArrayList<Goblin> getGoblins() {
+        return goblins;
+    }
+
+    public void setChest(ArrayList<TreasureChest> chest) {
+        this.chest = chest;
     }
 
     public void setPlay(boolean play) {
@@ -159,12 +449,16 @@ public class HumansVsGoblins {
         this.player = player;
     }
 
+    public void setUserInput(Scanner userInput) {
+        this.userInput = userInput;
+    }
+
     @Override
     public String toString() {
         String result = "";
         for (Land [] lands:this.getGameWorld()){
             for (Land land: lands){
-                if (land.getSymbol() == "|") {
+                if (land.getSymbol().compareTo("|")==0) {
                     result += "|" + land.getSymbol() + "|";
                 }else {
                     result += " " + land.getSymbol() + " ";
@@ -173,6 +467,21 @@ public class HumansVsGoblins {
             result+="\n";
         }
         return result;
+    }
+
+    public void removeHuman(Human h){
+        int[] position = h.getPosition();
+        this.gameWorld[position[0]][position[1]] = new Land(position);
+        this.getHumans().remove(h);
+    }
+
+    public void removeGoblin(Goblin g){
+        int[] position = g.getPosition();
+        g.getDrops().setPosition(g.getPosition());
+        //Place Drop when goblin dies
+        this.gameWorld[position[0]][position[1]] = g.getDrops();
+        this.drops.add(g.getDrops());
+        this.getGoblins().remove(g);
     }
 
     public static void main(String[] args) {

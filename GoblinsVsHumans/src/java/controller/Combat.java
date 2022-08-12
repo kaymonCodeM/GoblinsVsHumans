@@ -31,48 +31,42 @@ public class Combat {
     public static String goblinVsHuman(Human h, Goblin g,HumansVsGoblins game){
         String result = "";
         Land[][] newWorld = game.getGameWorld();
-        while (h.getHealth()>0 || g.getHealth()>0){
+        while (h.getHealth()>0 && g.getHealth()>0){
             goblinAttack(h,g);
             humanAttackGoblin(h,g);
         }
-
         if (h.getHealth()<=0 && g.getHealth()<=0){
-            newWorld[g.getPosition()[0]][g.getPosition()[1]] = g.getDrops();
-            newWorld[h.getPosition()[0]][h.getPosition()[1]] = new Land(h.getPosition());
-            result += "Human and Goblin both killed each other";
+            game.removeGoblin(g);
+            game.removeHuman(h);
+            result += "A Human and Goblin both killed each other." + "\n";
         } else if (h.getHealth()<=0) {
-            newWorld[g.getPosition()[0]][g.getPosition()[1]] = g.getDrops();
-            result += "Human has been killed by the Goblin";
+            game.removeHuman(h);
+            result += "A Human has been killed by the Goblin." + "\n";
         }else if(g.getHealth()<=0){
-            newWorld[h.getPosition()[0]][h.getPosition()[1]] = new Land(h.getPosition());
-            result += "The Goblin has been killed by the Human";
+            game.removeGoblin(g);
+            result += "A Goblin has been killed by a Human." + "\n";
         }
-
-        game.setGameWorld(newWorld);
         return result;
     }
 
-    public static String playerVsHuman(Player p, Goblin g, HumansVsGoblins game){
+    public static String playerVsGoblin(Player p, Goblin g, HumansVsGoblins game){
         String result = "";
-        Land[][] newWorld = game.getGameWorld();
 
-        while (p.getHealth()>0 || g.getHealth()>0){
+        while (p.getHealth()>0 && g.getHealth()>0){
             goblinAttack(p,g);
             playerAttackGoblin(p,g);
         }
-
         if (p.getHealth()<=0 && g.getHealth()<=0){
             game.setPlay(false);
-            result += "You and the goblin Killed each other: GAME OVER";
+            result += "You and the goblin Killed each other: GAME OVER!" + "\n";
         } else if (p.getHealth()<=0) {
             game.setPlay(false);
-            result += "You have been killed by the Goblin: GAME OVER";
+            result += "You have been killed by the Goblin: GAME OVER!" + "\n";
         }else if(g.getHealth()<=0){
-            newWorld[g.getPosition()[0]][g.getPosition()[1]] = g.getDrops();
-            result += "Great Job you have killed the goblin";
+            game.removeGoblin(g);
+            result += "Great Job you have killed the goblin." + "\n";
         }
 
-        game.setGameWorld(newWorld);
         return result;
     }
 
